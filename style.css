@@ -56,7 +56,7 @@ a:hover{ text-decoration:underline; }
   margin-top:12px;
   display:grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap:12px;
+  gap:20px;
 }
 
 /* each post is a card (make your <a> look like a card) */
