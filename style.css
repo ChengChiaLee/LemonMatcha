@@ -1,1 +1,12 @@
-
+body{margin:0;font:16px/1.6 system-ui;background:#0b0f14;color:#e6edf3}
+a{color:#7aa2ff;text-decoration:none} a:hover{text-decoration:underline}
+.wrap{max-width:860px;margin:0 auto;padding:28px 18px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:18px}
+.nav a{margin-left:12px;color:#9aa4af}
+.card{border:1px solid #1f2a3a;border-radius:12px;padding:16px;background:#121824}
+.muted{color:#9aa4af}
+.list{list-style:none;padding:0;margin:0}
+.item{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed #243043}
+.item:last-child{border-bottom:0}
+code,pre{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+pre{padding:12px;border-radius:10px;border:1px solid #1f2a3a;background:#0b0f14;overflow:auto}
