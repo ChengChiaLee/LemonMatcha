@@ -5,83 +5,121 @@ body{
   color:#e6edf3;
 }
 
+/* subtle animated background glow (very minimal) */
+body::before{
+  content:"";
+  position:fixed;
+  inset:-200px;
+  background:
+    radial-gradient(600px 400px at 20% 10%, rgba(122,162,255,.12), transparent 60%),
+    radial-gradient(500px 380px at 80% 30%, rgba(80,220,255,.08), transparent 60%),
+    radial-gradient(500px 500px at 50% 90%, rgba(160,120,255,.06), transparent 60%);
+  filter: blur(10px);
+  pointer-events:none;
+  animation: floatGlow 10s ease-in-out infinite alternate;
+}
+
+@keyframes floatGlow{
+  from{ transform: translate3d(0,0,0); }
+  to{ transform: translate3d(0,-18px,0); }
+}
+
 /* links */
 a{ color:#7aa2ff; text-decoration:none; }
 a:hover{ text-decoration:underline; }
 
 /* layout */
-.wrap{ max-width:860px; margin:0 auto; padding:28px 18px; }
+.wrap{ max-width:860px; margin:0 auto; padding:26px 18px; position:relative; }
 
+/* top bar */
 .top{
   display:flex;
   justify-content:space-between;
   gap:12px;
-  align-items:baseline;
-  margin-bottom:18px;
+  align-items:flex-end;
+  margin-bottom:20px;
+  animation: enter .55s ease both;
 }
+
+.brand .name{
+  font-weight:800;
+  letter-spacing:.2px;
+}
+.brand .tag{ margin-top:2px; font-size:14px; }
 
 .nav a{
   margin-left:12px;
   color:#9aa4af;
+  transition: color .12s ease, transform .12s ease;
 }
-.nav a:hover{ color:#e6edf3; text-decoration:none; }
+.nav a:hover{
+  color:#e6edf3;
+  text-decoration:none;
+  transform: translateY(-1px);
+}
 
 .muted{ color:#9aa4af; }
 
-/* section card (container) */
-.card{
-  border:1px solid #1f2a3a;
-  border-radius:14px;
-  padding:18px;
-  background:#121824;
-  box-shadow: 0 10px 30px rgba(0,0,0,.25);
-  margin: 32px 0;
+/* hero */
+.hero{
+  margin: 4px 0 14px;
+  animation: enter .55s ease .08s both;
+}
+.hero-title{
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: .2px;
+}
+.hero-sub{
+  margin: 6px 0 0;
+  font-size: 14px;
 }
 
-/* posts grid */
-
-.post{
-  max-width: 72ch;        /* good reading width */
-}
-
-.post p{
-  margin: 0 0 14px 0;     /* spacing between paragraphs */
-}
-
-.post h1{
-  line-height: 1.2;
-  margin: 10px 0 12px;
-}
-
+/* posts grid (you already had this, kept and slightly refined) */
 .posts{
-  margin-top:12px;
+  margin-top:14px;
   display:grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap:20px;
+  gap:16px;
+  animation: enter .55s ease .16s both;
 }
 
-/* each post is a card (make your <a> look like a card) */
+/* each post card */
 .post-card{
   display:block;
   padding:14px 14px;
-  border-radius:12px;
+  border-radius:14px;
   background: rgba(255,255,255,.03);
   border:1px solid rgba(255,255,255,.08);
   text-decoration:none;
-  transition: transform .12s ease, border-color .12s ease, background .12s ease;
+  transition: transform .14s ease, border-color .14s ease, background .14s ease;
+  will-change: transform;
 }
 
 .post-card:hover{
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   background: rgba(255,255,255,.05);
   border-color: rgba(122,162,255,.35);
-  text-decoration:none; /* prevent underline on whole card */
+  text-decoration:none;
+}
+
+.post-top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:baseline;
+  margin-bottom:6px;
 }
 
 .post-title{
-  font-weight:700;
-  margin:0 0 6px 0;
+  font-weight:750;
+  margin:0;
   color:#cfe0ff;
+}
+
+.post-meta{
+  font-size:13px;
+  white-space:nowrap;
 }
 
 .post-desc{
@@ -90,31 +128,28 @@ a:hover{ text-decoration:underline; }
   color: rgba(230,237,243,.70);
 }
 
-/* keep your old list styles (optional / backward compatible) */
-.list{ list-style:none; padding:0; margin:0; }
-.item{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  padding:10px 0;
-  border-bottom:1px dashed #243043;
+/* footer */
+.foot{
+  margin-top:18px;
+  font-size:13px;
+  animation: enter .55s ease .22s both;
 }
-.item:last-child{ border-bottom:0; }
 
-/* code blocks */
-code,pre{
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+/* enter animation */
+@keyframes enter{
+  from{ opacity:0; transform: translateY(6px); }
+  to{ opacity:1; transform: translateY(0); }
 }
-pre{
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #1f2a3a;
-  background:#0b0f14;
-  overflow:auto;
+
+/* reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce){
+  *{ animation:none !important; transition:none !important; }
+  body::before{ display:none; }
 }
 
 /* small screens */
 @media (max-width:640px){
   .top{ flex-direction:column; align-items:flex-start; }
   .nav a{ margin-left:0; margin-right:12px; }
+  .post-top{ flex-direction:column; align-items:flex-start; }
 }
