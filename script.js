@@ -1,4 +1,6 @@
 // footer year
+console.log("script.js loaded");
+
 document.getElementById('y').textContent = new Date().getFullYear();
 
 const root = document.documentElement;
