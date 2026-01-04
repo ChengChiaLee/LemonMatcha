@@ -1,7 +1,10 @@
 // footer year
 console.log("script.js loaded");
 
-document.getElementById('y').textContent = new Date().getFullYear();
+const year = document.getElementById('y');
+if (year) {
+  year.textContent = new Date().getFullYear();
+}
 
 const root = document.documentElement;
 const btn = document.getElementById('themeBtn');
