@@ -82,6 +82,23 @@ a:hover{ text-decoration:underline; }
   animation: enter .55s ease both;
 }
 
+/* post top bar */
+.post-topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.back-link{
+  color: var(--nav);
+  font-size:14px;
+}
+.back-link:hover{
+  color: var(--text);
+  text-decoration:none;
+}
+
 .brand .name{
   font-weight:800;
   letter-spacing:.2px;
