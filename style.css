@@ -16,6 +16,15 @@
   --glow1: rgba(122,162,255,.12);
   --glow2: rgba(80,220,255,.08);
   --glow3: rgba(160,120,255,.06);
+
+  /* --- code theme vars (dark) --- */
+  --code-bg: rgba(20,20,24,.92);
+  --code-bd: rgba(255,255,255,.12);
+  --code-shadow: 0 6px 18px rgba(0,0,0,.25);
+  --code-text: var(--text);
+
+  --inline-code-bg: rgba(255,255,255,.06);
+  --inline-code-bd: rgba(255,255,255,.10);
 }
 
 /* Light theme */
@@ -37,6 +46,15 @@
   --glow1: rgba(37,99,235,.10);
   --glow2: rgba(14,165,233,.08);
   --glow3: rgba(99,102,241,.06);
+
+  /* --- code theme vars (light) --- */
+  --code-bg: rgba(17,24,39,.04);
+  --code-bd: rgba(17,24,39,.12);
+  --code-shadow: 0 6px 18px rgba(17,24,39,.10);
+  --code-text: var(--text);
+
+  --inline-code-bg: rgba(17,24,39,.06);
+  --inline-code-bd: rgba(17,24,39,.12);
 }
 
 body{
@@ -389,7 +407,7 @@ a:hover{ text-decoration:underline; }
   font-variant-numeric: tabular-nums;
 }
 
-/* ---- code block box ---- */
+/* ---- code block box (theme-aware) ---- */
 pre{
   padding:14px;
   border-radius:12px;
@@ -397,14 +415,34 @@ pre{
   font-size:14px;
   line-height:1.5;
 
-  border:1px solid rgba(255,255,255,.12);
-  background:rgba(20,20,24,.92);
-  box-shadow:0 6px 18px rgba(0,0,0,.25);
+  border: 1px solid var(--code-bd);
+  background: var(--code-bg);
+  box-shadow: var(--code-shadow);
+  color: var(--code-text);
 }
 
 pre code{
   display:block;
   white-space:pre;
   font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+  color: inherit;
 }
 
+/* inline code (optional but recommended) */
+:not(pre) > code{
+  padding: 2px 6px;
+  border-radius: 8px;
+  background: var(--inline-code-bg);
+  border: 1px solid var(--inline-code-bd);
+  font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+  font-size: .95em;
+}
+
+/* if you use Prism/highlight.js, these prevent it from forcing a fixed theme */
+pre[class*="language-"],
+code[class*="language-"],
+.hljs{
+  background: var(--code-bg) !important;
+  border-color: var(--code-bd) !important;
+  color: var(--code-text) !important;
+}
