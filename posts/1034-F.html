@@ -146,8 +146,7 @@
       <br>
     <p>實作：</p>
       
-<pre><code class="language-cpp">
-bool is_prime[n+1]; 
+<pre><code class="language-cpp">bool is_prime[n+1]; 
 memset(isp,1,sizeof(is_prime)); 
 is_prime[0]=is_prime[1]=0; 
 for(int i=2;i*i<=n;i++)if(is_prime[i])for(int j=i*i;j<=n;j+=i)is_prime[(int)j]=0; 
@@ -155,8 +154,7 @@ for(int i=2;i*i<=n;i++)if(is_prime[i])for(int j=i*i;j<=n;j+=i)is_prime[(int)j]=0
 
     <p>先記錄 1 到 n 得質數</p>
       <br>
-<pre><code class="language-cpp">
-vector&lt;queue&lt;int&gt;&gt; num(n+1);
+<pre><code class="language-cpp">vector&lt;queue&lt;int&gt;&gt; num(n+1);
 vector&lt;int&gt; from(n+1,0); 
 for(int i=n;i>=2;i--){ 
   if(!is_prime[i])continue; 
@@ -168,16 +166,14 @@ for(int i=n;i>=2;i--){
 </code></pre>
     <p>從大的數開始 把質數的倍數放進 num 裡面 並同時記錄這個數字是由哪個質數的倍數而來的 方便之後讀取</p>
       <br>
-<pre><code class="language-cpp">
-for(int i=1;i<=n;i++)if(num[i].size()){
+<pre><code class="language-cpp">for(int i=1;i<=n;i++)if(num[i].size()){
   num[i].push(num[i].front()); 
   num[i].pop(); 
 } 
 </code></pre>
     <p>把 num 裡面的數字前移一位</p>
       <br>
-<pre><code class="language-cpp">
-vector&lt;int&gt; ans; 
+<pre><code class="language-cpp">vector&lt;int&gt; ans; 
 ans.push_back(1);
 for(int i=2;i<=n;i++){ 
   ans.push_back(num[from[i]].front()); 
