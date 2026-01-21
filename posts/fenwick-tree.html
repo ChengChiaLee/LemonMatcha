@@ -89,7 +89,85 @@
     </div>
 
     <h1>樹狀陣列</h1>
-    <p>樹狀陣列（或稱樹狀數組）就是一個簡化版的線段樹 能維護具有 結合律 可差分 的訊息 空間只要開 O(N) 就可以了</p>
+    <p>
+樹狀陣列（Fenwick Tree / BIT）是一種用 <b>O(N)</b> 空間維護前綴資訊的資料結構，
+專門用來處理「<b>單點修改</b>」與「<b>前綴和 / 區間和查詢</b>」。
+</p>
+
+<p>
+BIT 之所以能運作 是因為它維護的資訊必須滿足 <b>結合律</b>（例如加法）
+並且能透過前綴差分得到區間答案：
+<b>sum(l..r) = prefix(r) - prefix(l-1)</b>。
+因此最常見用途是維護「和」也可擴展到 XOR 等可用前綴差分的運算
+</p>
+
+
+<p>
+樹狀陣列支援：
+<ul>
+  <li><b>單點修改：</b> a[x] += v 時間 <b>O(log N)</b></li>
+  <li><b>前綴和：</b> sum(1..x) 時間 <b>O(log N)</b></li>
+  <li><b>區間和：</b> sum(l..r) = prefix(r) - prefix(l-1) 時間 <b>O(log N)</b></li>
+</ul>
+</p>
+
+<p>
+其中關鍵函式是 <b>lowbit(x)</b>：
+<b>lowbit(x) = x & (-x)</b> 
+代表 x 的二進位中「最右邊的 1」所對應的值（2 的冪次） 
+例如：
+<ul>
+  <li>lowbit(8 = 1000) = 8</li>
+  <li>lowbit(7 = 0111) = 1</li>
+  <li>lowbit(6 = 0110) = 2</li>
+</ul>
+</p>
+
+<p>
+BIT 的節點意義是：<b>bit[i]</b> 管理一段連續區間的總和：
+<b>[ i - lowbit(i) + 1 , i ]</b> 
+也就是「以 i 為右端點、長度為 lowbit(i) 的區間」 
+</p>
+
+<p>
+例如：
+<ul>
+  <li><b>bit[8]</b>：lowbit(8)=8 → 管 <b>[1, 8]</b></li>
+  <li><b>bit[7]</b>：lowbit(7)=1 → 管 <b>[7, 7]</b></li>
+  <li><b>bit[6]</b>：lowbit(6)=2 → 管 <b>[5, 6]</b></li>
+</ul>
+</p>
+
+<p>
+為什麼查詢和更新都是 O(logN)？
+<ul>
+  <li><b>查詢 prefix(x)：</b> 從 x 開始 把 bit[x] 加進答案後 令 x -= lowbit(x) 不斷往前跳直到 0</li>
+  <li><b>更新 add(x, v)：</b> 從 x 開始 令 bit[x] += v 然後 x += lowbit(x) 跳到下一個「包含 x 的更大區間」 直到超過 N</li>
+</ul>
+因此：
+<ul>
+  <li><b>x + lowbit(x)</b> 可以視為「往上跳到父節點」</li>
+  <li><b>x - lowbit(x)</b> 可以視為「往前跳到剩下前綴」</li>
+</ul>
+</p>
+
+<br>
+    <p>實作程式碼：</p>
+    
+<pre><code class="language-cpp">int lowbit(int x){
+    rtn x&amp;-x;
+}
+  
+void change(int x,int k){
+    while(x&lt;=n)a[x]+=k,x+=lowbit(x);
+}
+  
+int query(int x){
+    int t=0;
+    while(x)t+=a[x],x-=lowbit(x);
+    rtn t;
+}</code></pre>
+<br>
 
 <div class="bit-card" id="bitViz">
   <h2 style="margin:0 0 8px 0;">Fenwick Tree 視覺化</h2>
