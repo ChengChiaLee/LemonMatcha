@@ -1,75 +1,81 @@
 <!doctype html>
 <html>
 <head>
+  <style>
+  .bit-card{
+    margin-top: 16px;
+    padding: 14px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px;
+    background: rgba(255,255,255,.03);
+  }
+  .bit-row{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:10px 0; }
+  .bit-row label{ color: var(--muted); font-size: 14px; }
+  .bit-row input{
+    width: 110px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.15);
+    color: var(--text);
+    outline: none;
+  }
+  .bit-row button{
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    cursor: pointer;
+  }
+  .bit-row button:hover{ background: rgba(255,255,255,.10); }
+  .bit-note{ color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .table-like{
+    overflow-x:auto;
+    padding-bottom: 6px;
+  }
+
+  .cells{ display:flex; gap:8px; align-items:flex-end; flex-wrap:nowrap; }
+  .cell{
+    min-width: 78px;
+    padding: 10px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.03);
+    position: relative;
+  }
+  .cell .top{ font-size: 12px; color: var(--muted); }
+  .cell .val{ font-size: 16px; margin-top: 6px; }
+  .cell .range{ font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+  .cell.active{
+    border-color: rgba(122,162,255,.60);
+    box-shadow: 0 0 0 3px rgba(122,162,255,.18);
+    background: rgba(122,162,255,.10);
+  }
+
+  .out{
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.12);
+    color: var(--text);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    white-space: pre-wrap;
+  }
+</style>
+
   <meta charset="utf-8">
   <title>樹狀陣列</title>
   <link rel="stylesheet" href="../style.css">
-  <style>
-    .treebox { margin: 18px 0; }
-.tree-svg{
-  width: 100%;
-  height: 360px;
-  display: block;
-  border-radius: 14px;
-  border: 1px solid rgba(0,0,0,.12);
-  background: linear-gradient(180deg, rgba(122,162,255,.05), rgba(255,255,255,0));
-}
-
-.edge {
-  stroke: rgba(26,163,74,.75);
-  stroke-width: 3;
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 2px 2px rgba(0,0,0,.10));
-}
-
-.nodeRect{
-  fill: rgba(255,255,255,.92);
-  stroke: rgba(26,163,74,.85);
-  stroke-width: 2;
-  rx: 10; ry: 10;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,.12));
-}
-
-.leafRect{
-  fill: rgba(255,255,255,.92);
-  stroke: rgba(20,20,20,.75);
-  stroke-width: 2;
-  rx: 10; ry: 10;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,.10));
-}
-
-.nodeText{
-  font-size: 15px;
-  fill: rgba(26,163,74,.95);
-  font-weight: 650;
-  dominant-baseline: middle;
-  text-anchor: middle;
-}
-
-.leafText{
-  font-size: 15px;
-  fill: rgba(30,30,30,.95);
-  font-weight: 600;
-  dominant-baseline: middle;
-  text-anchor: middle;
-}
-
-.level {
-  font-size: 16px;
-  fill: rgba(176,0,0,.85);
-  font-weight: 650;
-  dominant-baseline: middle;
-  text-anchor: middle;
-  opacity: .8;
-}
-
-.gnode { cursor: pointer; transition: transform .15s ease; transform-origin: center; }
-.gnode:hover { transform: translateY(-2px) scale(1.03); }
-.edge.dim { opacity: .20; }
-.gnode.dim { opacity: .35; }
-  </style>
 </head>
 <body>
   <div class="wrap">
@@ -85,184 +91,237 @@
     <h1>樹狀陣列</h1>
     <p>樹狀陣列（或稱樹狀數組）就是一個簡化版的線段樹 能維護具有 結合律 可差分 的訊息 空間只要開 O(N) 就可以了</p>
 
-    <div class="treebox">
-  <svg id="viz" class="tree-svg" viewBox="0 0 900 360"></svg>
+<div class="bit-card" id="bitViz">
+  <h2 style="margin:0 0 8px 0;">Fenwick Tree 視覺化</h2>
+  <div class="bit-note">
+    Fenwick 的核心：<b>bit[i]</b> 管的是區間 <b>[i - lowbit(i) + 1 .. i]</b>。<br>
+    Update: i += lowbit(i)； Query: i -= lowbit(i)。
+  </div>
+
+  <div class="bit-row">
+    <label>N</label>
+    <input id="nInput" type="number" min="1" max="32" value="8">
+    <label>初始化 a[1..N]（用空白分隔）</label>
+    <input id="arrInput" type="text" value="3 1 4 1 5 9 2 6" style="width:340px;">
+    <button id="buildBtn" type="button">Build</button>
+  </div>
+
+  <div class="bit-row">
+    <label>Update: add at index</label>
+    <input id="updIdx" type="number" min="1" value="3">
+    <label>delta</label>
+    <input id="updDelta" type="number" value="5">
+    <button id="updBtn" type="button">Apply Update</button>
+
+    <span style="width:18px;"></span>
+
+    <label>Query: prefix sum up to</label>
+    <input id="qryIdx" type="number" min="1" value="6">
+    <button id="qryBtn" type="button">Run Query</button>
+    <button id="clearHiBtn" type="button">Clear Highlight</button>
+  </div>
+
+  <div class="grid">
+    <div class="table-like">
+      <div style="color:var(--muted); font-size:13px; margin-bottom:6px;">a[i]（原陣列）</div>
+      <div class="cells" id="aCells"></div>
+    </div>
+
+    <div class="table-like">
+      <div style="color:var(--muted); font-size:13px; margin-bottom:6px;">bit[i]（Fenwick 內部樹狀值）</div>
+      <div class="cells" id="bitCells"></div>
+    </div>
+
+    <div class="out" id="logBox">Click “Build” to initialize.</div>
+  </div>
 </div>
 
-
+    
     <p></p>
     <p></p>
     <p></p>
     <p></p>
   </div>
+<script>
+(function(){
+  let N = 8;
+  let a = [];
+  let bit = [];
 
-  <script>
-(function () {
-  const svg = document.getElementById("viz");
-  if (!svg) return;
+  const el = (id) => document.getElementById(id);
 
-  const n = 8;
+  function lowbit(x){ return x & -x; }
 
-  // slightly more "airy" layers
-  const yRoot = 50, yL2 = 125, yL1 = 205, yLeaf = 295;
-
-  const boxW = 60, boxH = 34;
-  const leafW = 60, leafH = 34;
-
-  // leaf x positions
-  const leftPad = 95, rightPad = 55;
-  const usableW = 900 - leftPad - rightPad;
-  const gap = usableW / (n - 1);
-  const leafX = Array.from({ length: n }, (_, i) => leftPad + i * gap);
-
-  const NS = "http://www.w3.org/2000/svg";
-
-  function mk(tag) { return document.createElementNS(NS, tag); }
-
-  function curvedEdge(x1, y1, x2, y2) {
-    // smooth cubic curve: looks "hand-drawn but clean"
-    const dx = Math.abs(x2 - x1);
-    const c = Math.min(80, Math.max(40, dx * 0.25));
-    const p = mk("path");
-    p.setAttribute("d", `M ${x1} ${y1} C ${x1} ${y1 + c}, ${x2} ${y2 - c}, ${x2} ${y2}`);
-    p.setAttribute("class", "edge");
-    svg.appendChild(p);
-    return p;
+  function resetArrays(n){
+    N = n;
+    a = new Array(N+1).fill(0);
+    bit = new Array(N+1).fill(0);
   }
 
-  function levelMark(txt, x, y) {
-    const t = mk("text");
-    t.setAttribute("x", x);
-    t.setAttribute("y", y);
-    t.setAttribute("class", "level");
-    t.textContent = txt;
-    svg.appendChild(t);
-  }
-
-  function nodeGroup(x, y, w, h, label, isLeaf) {
-    const g = mk("g");
-    g.setAttribute("class", "gnode");
-
-    const r = mk("rect");
-    r.setAttribute("x", x - w/2);
-    r.setAttribute("y", y - h/2);
-    r.setAttribute("width", w);
-    r.setAttribute("height", h);
-    r.setAttribute("class", isLeaf ? "leafRect" : "nodeRect");
-    g.appendChild(r);
-
-    const t = mk("text");
-    t.setAttribute("x", x);
-    t.setAttribute("y", y);
-    t.setAttribute("class", isLeaf ? "leafText" : "nodeText");
-    t.textContent = label;
-    g.appendChild(t);
-
-    svg.appendChild(g);
-    return g;
-  }
-
-  // clear svg
-  while (svg.firstChild) svg.removeChild(svg.firstChild);
-
-  // build segment tree structure
-  const children = new Map();  // id -> [L,R]
-  const pos = new Map();       // id -> {x,y,label,isLeaf}
-  let nextId = 1;
-
-  function build(l, r) {
-    const id = nextId++;
-    if (l === r) {
-      children.set(id, []);
-      pos.set(id, { x: leafX[l - 1], y: yLeaf, label: `a${l}`, isLeaf: true });
-      return id;
-    }
-    const mid = (l + r) >> 1;
-    const L = build(l, mid);
-    const R = build(mid + 1, r);
-    children.set(id, [L, R]);
-
-    const x = (pos.get(L).x + pos.get(R).x) / 2;
-    const len = r - l + 1;
-    let y = yRoot;
-    if (len === 8) y = yRoot;
-    else if (len === 4) y = yL2;
-    else if (len === 2) y = yL1;
-
-    pos.set(id, { x, y, label: `s${id}`, isLeaf: false });
-    return id;
-  }
-
-  build(1, n);
-
-  // level labels (optional)
-  levelMark("3", 30, yRoot);
-  levelMark("2", 30, yL2);
-  levelMark("1", 30, yL1);
-  levelMark("0", 30, yLeaf);
-
-  // draw edges first; also record which edges connect to each node for hover
-  const edges = [];
-  const nodeEdges = new Map(); // id -> [edgeIndices]
-
-  function addNodeEdge(id, idx) {
-    if (!nodeEdges.has(id)) nodeEdges.set(id, []);
-    nodeEdges.get(id).push(idx);
-  }
-
-  for (const [id, kids] of children.entries()) {
-    for (const k of kids) {
-      const a = pos.get(id), b = pos.get(k);
-
-      const y1 = a.y + boxH / 2;
-      const y2 = b.y - (b.isLeaf ? leafH / 2 : boxH / 2);
-
-      const e = curvedEdge(a.x, y1, b.x, y2);
-      const idx = edges.length;
-      edges.push({ el: e, u: id, v: k });
-
-      addNodeEdge(id, idx);
-      addNodeEdge(k, idx);
+  function bitAdd(i, delta){
+    while(i <= N){
+      bit[i] += delta;
+      i += lowbit(i);
     }
   }
 
-  // draw nodes (as groups)
-  const nodeEls = new Map(); // id -> <g>
-  for (const [id, info] of pos.entries()) {
-    const g = nodeGroup(info.x, info.y, info.isLeaf ? leafW : boxW, info.isLeaf ? leafH : boxH, info.label, info.isLeaf);
-    nodeEls.set(id, g);
+  function bitSum(i){
+    let s = 0;
+    while(i > 0){
+      s += bit[i];
+      i -= lowbit(i);
+    }
+    return s;
   }
 
-  // hover interaction: highlight node + its connected edges
-  function setDimAll(dim) {
-    for (const e of edges) e.el.classList.toggle("dim", dim);
-    for (const [id, g] of nodeEls.entries()) g.classList.toggle("dim", dim);
+  function buildFromA(){
+    bit.fill(0);
+    for(let i=1;i<=N;i++) bitAdd(i, a[i]);
   }
 
-  function highlight(id) {
-    setDimAll(true);
+  function rangeOf(i){
+    const l = i - lowbit(i) + 1;
+    const r = i;
+    return [l, r];
+  }
 
-    // un-dim hovered node
-    nodeEls.get(id).classList.remove("dim");
-
-    // un-dim edges touching it + their other endpoint nodes
-    const es = nodeEdges.get(id) || [];
-    for (const idx of es) {
-      edges[idx].el.classList.remove("dim");
-      nodeEls.get(edges[idx].u).classList.remove("dim");
-      nodeEls.get(edges[idx].v).classList.remove("dim");
+  function clearHighlights(){
+    for(const node of document.querySelectorAll("#bitCells .cell")){
+      node.classList.remove("active");
     }
   }
 
-  function clearHighlight() { setDimAll(false); }
+  function render(){
+    // a cells
+    const aWrap = el("aCells");
+    aWrap.innerHTML = "";
+    for(let i=1;i<=N;i++){
+      const div = document.createElement("div");
+      div.className = "cell";
+      div.innerHTML = `
+        <div class="top">a[${i}]</div>
+        <div class="val">${a[i]}</div>
+      `;
+      aWrap.appendChild(div);
+    }
 
-  for (const [id, g] of nodeEls.entries()) {
-    g.addEventListener("mouseenter", () => highlight(id));
-    g.addEventListener("mouseleave", clearHighlight);
+    // bit cells + ranges
+    const bWrap = el("bitCells");
+    bWrap.innerHTML = "";
+    for(let i=1;i<=N;i++){
+      const [l,r] = rangeOf(i);
+      const div = document.createElement("div");
+      div.className = "cell";
+      div.dataset.idx = String(i);
+      div.innerHTML = `
+        <div class="top">bit[${i}]</div>
+        <div class="val">${bit[i]}</div>
+        <div class="range">covers [${l}..${r}]</div>
+      `;
+      bWrap.appendChild(div);
+    }
   }
+
+  function highlightIndices(list){
+    clearHighlights();
+    const set = new Set(list);
+    for(const node of document.querySelectorAll("#bitCells .cell")){
+      const idx = Number(node.dataset.idx);
+      if(set.has(idx)) node.classList.add("active");
+    }
+  }
+
+  function log(msg){
+    el("logBox").textContent = msg;
+  }
+
+  function parseArray(input, n){
+    const parts = input.trim().split(/\s+/).filter(x => x.length);
+    const res = new Array(n+1).fill(0);
+    for(let i=1;i<=n;i++){
+      res[i] = (i-1 < parts.length) ? Number(parts[i-1]) : 0;
+      if(!Number.isFinite(res[i])) res[i] = 0;
+    }
+    return res;
+  }
+
+  // UI handlers
+  el("buildBtn").addEventListener("click", function(){
+    const n = Math.max(1, Math.min(32, Number(el("nInput").value || 8)));
+    resetArrays(n);
+    a = parseArray(el("arrInput").value, N);
+    buildFromA();
+    render();
+    clearHighlights();
+    log(
+`Built Fenwick with N=${N}
+Rule: bit[i] covers [i-lowbit(i)+1 .. i]
+Try: Update index + delta, or Query prefix sum.`
+    );
+  });
+
+  el("updBtn").addEventListener("click", function(){
+    const idx = Number(el("updIdx").value);
+    const delta = Number(el("updDelta").value);
+    if(!(1 <= idx && idx <= N) || !Number.isFinite(delta)){
+      log("Invalid update input.");
+      return;
+    }
+    a[idx] += delta;
+
+    // compute update path for highlight
+    let path = [];
+    let i = idx;
+    while(i <= N){
+      path.push(i);
+      i += lowbit(i);
+    }
+
+    bitAdd(idx, delta);
+    render();
+    highlightIndices(path);
+
+    log(
+`Update: a[${idx}] += ${delta}
+Touched indices (i += lowbit(i)): ${path.join(" -> ")}
+Now prefixSum(${idx}) = ${bitSum(idx)}`
+    );
+  });
+
+  el("qryBtn").addEventListener("click", function(){
+    const idx = Number(el("qryIdx").value);
+    if(!(1 <= idx && idx <= N)){
+      log("Invalid query index.");
+      return;
+    }
+
+    // compute query path for highlight
+    let path = [];
+    let i = idx;
+    let s = 0;
+    while(i > 0){
+      path.push(i);
+      s += bit[i];
+      i -= lowbit(i);
+    }
+
+    highlightIndices(path);
+    log(
+`Query: prefixSum(${idx})
+Visited indices (i -= lowbit(i)): ${path.join(" -> ")}
+Answer = ${s}`
+    );
+  });
+
+  el("clearHiBtn").addEventListener("click", function(){
+    clearHighlights();
+    log("Highlights cleared.");
+  });
+
+  // auto-build once
+  el("buildBtn").click();
 })();
 </script>
-
 
   <script src="../script.js"></script>
 </body>
