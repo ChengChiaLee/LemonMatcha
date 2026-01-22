@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>C. Maximum width</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <div class="wrap">
+
+    <div class="post-topbar">
+      <a class="back-link" href="../index.html">← back</a>
+
+      <button class="theme-btn" id="themeBtn" type="button">
+        <span class="theme-txt">Dark</span>
+      </button>
+    </div>
+
+    <h1>C. Maximum width</h1>
+    <p>題目來源：Codeforces Round 704 (Div. 2)</p>
+    <p>題目敘述：給兩個字串 s 和 t 其長度分別為 n 和 m 要找到一組 p_1 p_2 p_3 ... p_m (increasing order) 的片列使得 s[p_i]=t[i] 一組 p 序列的寬是 max(p_i+1 - p_i)</p>
+    <p>先找一組最小的 p 序列 從 s 的開頭開始對 t 紀錄 pos 遇到 t[i] 就記錄下來並繼續 再從 s 的後面進行一樣的紀錄 並對於 pos 的差進行比較</p>
+    <br>
+    <p>初始：</p>
+<pre><code class="language-cpp">int n,m;cin&gt;&gt;n&gt;&gt;m;
+string s,t;cin&gt;&gt;s&gt;&gt;t;
+int pos[n+1];
+int cur=0;
+</code></pre>
+    <br>
+    <p>紀錄第一個出現 t[i] 的位置</p>
+<pre><code class="language-cpp">for(int i=0;i&lt;m;i++){
+    while(s[cur]!=t[i])cur++;
+    pos[i]=cur++;
+}
+</code></pre>
+    <br>
+    <p>紀錄最後一個出現 t[i] 的位置</p>
+<pre><code class="language-cpp">cur=n-1;
+for(int i=m-1;i&gt;0;i--){
+    while(s[cur]!=t[i])cur--;
+    ans=max(ans,cur-pos[i-1]);
+    cur--;
+}
+</code></pre>
+
+  </div>
+
+  <script src="../script.js"></script>
+</body>
+</html>
