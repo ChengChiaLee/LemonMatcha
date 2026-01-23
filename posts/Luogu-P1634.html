@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>P1637 三元上升子序列</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <div class="wrap">
+
+    <div class="post-topbar">
+      <a class="back-link" href="../index.html">← back</a>
+
+      <button class="theme-btn" id="themeBtn" type="button">
+        <span class="theme-txt">Dark</span>
+      </button>
+    </div>
+
+    <h1>P1637 三元上升子序列</h1>
+    <p>題目來源：洛谷 P1637</p>
+    <p>題目輸入：給一個長度為 ｎ 得數列 a_1 a_2 a_3 ... a_n 要找到一組數字 i&lt;j&lt;k s.t. a_i&lt;a_j&lt;a_k 並求出有多少組數字 (i,j,k)</p>
+    <p>利用兩個樹狀陣列（樹狀數組）t1 維護前面有多少個小於目前的數字 t2 維護前面有多少組 i&lt;j 所以只要每次加一個新數字前加上 t2 比這數字小的和就可以了</p>
+    <br>
+    <p>初始：</p>
+<pre><code class="language-cpp">int x;cin&gt;&gt;x;
+ans+=t2.query(x-1); // 加上有多少組 i&lt;j
+t2.add(x,t1.query(x-1));
+t1.add(x,1);
+</code></pre>
+
+  </div>
+
+  <script src="../script.js"></script>
+</body>
+</html>
